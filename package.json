@@ -1,0 +1,21 @@
+{
+  "name": "trab-sd-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "author": "Ingo Guilherme Both Eyng",
+  "license": "ISC",
+  "dependencies": {
+    "consign": "^0.1.6",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0",
+    "mqtt": "^2.18.8"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.5"
+  }
+}
