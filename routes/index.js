@@ -1,4 +1,4 @@
-module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
+module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn, mongodb) {
 
 	var Client = app.controllers.client;
 
@@ -15,9 +15,6 @@ module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
 		return request;
 	}
 
-
-
-
 	app.get(['/', '/login'], function(request, response, next){
 		request = renewSession(request);
 
@@ -31,10 +28,7 @@ module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
 		function(request, response, next){
 			request = renewSession(request);
 
-			return response.render('dashboard', {
-				layout: 'home',
-				user: request.user
-			});
+			Client.getSubsMessages(request, response, next, request.user);
 		}
 	);
 
@@ -43,24 +37,20 @@ module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
 	app.post('/follow', 
 		ensureLoggedIn(), 
 		function(request, response, next){
+			request = renewSession(request);
 			Client.follow(request.user, request.body.followuser);
 
-			return response.render('dashboard', {
-				layout: 'home',
-				user: request.user
-			});
+			Client.getSubsMessages(request, response, next, request.user);
 		}
 	);
 
 	app.post('/publish', 
 		ensureLoggedIn(), 
 		function(request, response, next){
+			request = renewSession(request);
 			Client.publish(request.user, request.body.publishmessage);
 
-			return response.render('dashboard', {
-				layout: 'home',
-				user: request.user
-			});
+			Client.getSubsMessages(request, response, next, request.user);
 		}
 	);
 
@@ -82,18 +72,6 @@ module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
 			Client.disconnect(request.user);
 			request.logout();
 			response.redirect('/login');
-		}
-	);
-
-	app.get('/profile',
-		ensureLoggedIn(),
-		function(request, response, next){
-			request = renewSession(request);
-
-			return response.render('profile', {
-				layout: 'home',
-				user: request.user
-			});
 		}
 	);
 }

@@ -1,4 +1,4 @@
-module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
+module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn, mongodb) {
 
 	var loggedUsers = [];
 
@@ -14,12 +14,17 @@ module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
 		create: function(username){
 			let newUser = {
 				username: username,
-				client: null
+				client: null,
+				subscribes: []
 			};
 
 			loggedUsers[username] = newUser;
 
 			return newUser;
+		},
+
+		getSubscribes: function(user){
+			return loggedUsers[user].subscribes;
 		},
 
 		subscribe: function(user, userSub){
@@ -28,6 +33,7 @@ module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
 				loggedUsers[user].client.subscribe(userSub, function (err) {
 					if (!err) {
 						console.log("Client '"+ user +"' subscribed at user: " + userSub + "!");
+						loggedUsers[user].subscribes.push(userSub);
 						return true;
 					}
 					else {

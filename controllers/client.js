@@ -1,6 +1,8 @@
-module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
+module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn, mongodb) {
 
 	var Client = app.models.client;
+	var db = app.models.db;
+	var myConsole = app.utils.myConsole;
 
 	return {
 
@@ -18,6 +20,44 @@ module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
 
 		publish: function(user, message){
 			Client.publish(user, message);
+		},
+
+		getSubsMessages(request, response, next, user){
+
+			let subs = Client.getSubscribes(user);
+
+			subs.forEach(function(item, indeX){
+				console.log(item.username);
+
+			});
+
+			db.find("messages", { topic: { $in: subs } }, {}, 0, function(err, result){
+				if (err) {
+					myConsole.logError("MongoDB", "getSubsMessages", err);
+
+					return response.status(503).json([err]);
+				}
+				else{
+					if(result){
+						myConsole.logSuccess("MongoDB", "getSubsMessages", "Subs messages " + result);
+
+						console.log(result);
+
+						return response.render('dashboard', {
+							layout: 'home',
+							user: request.user,
+							messages: result
+						});
+					}
+					else{
+						return response.render('dashboard', {
+							layout: 'home',
+							user: request.user,
+							error: "Car not inserted!"
+						});
+					}
+				}
+			});
 		},
 
 		login: function(request, response, next){
@@ -46,6 +86,7 @@ module.exports = function (app, mqtt, exphbs, passport, ensureLoggedIn) {
 
 						Client.create(user);
 						Client.connect(user, Client.getLocalURL());
+						Client.subscribe(user, user);
 
 						if(!request.body.keep_session){
 							//O botão de manter conectado não foi selecionado, fica on só por 20 minutos

@@ -9,6 +9,7 @@ var cookieParser = require('cookie-parser');
 var passport = require('passport');
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 var sha512 = require('js-sha512').sha512;
+var mongodb = require('mongodb');
 
 var app = express();
 
@@ -45,12 +46,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 consign()
-	.include('models/client.js')
+	.include('utils')
+	.then('models/client.js')
 	.then('config')
+	.then('models/db.js')
 	.then('models')
 	.then('controllers')
 	.then('routes')
-	.into(app, mqtt, exphbs, passport, ensureLoggedIn);
+	.into(app, mqtt, exphbs, passport, ensureLoggedIn, mongodb);
 
 module.exports = app;
 

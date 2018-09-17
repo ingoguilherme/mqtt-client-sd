@@ -1,4 +1,4 @@
-module.exports = function (app, exphbs, http, passport, ensureLoggedIn) {
+module.exports = function (app, exphbs, http, passport, ensureLoggedIn, mongodb) {
 
 	LocalStrategy = require('passport-local').Strategy;
 	var Client = app.models.client;
