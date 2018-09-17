@@ -1,0 +1,77 @@
+<div class="container">
+    <h3 class="text-success mt-4">Motoristas</h3>
+    <hr>
+
+    {{#if error}}
+    	<div class="alert alert-danger" role="alert">
+			{{{error}}}
+		</div>
+    {{/if}}
+
+    {{#if success}}
+    	<div class="alert alert-success" role="alert">
+			{{{success}}}
+		</div>
+    {{/if}}
+
+	<div class="col-lg-12">
+		<div class="row">
+			{{#if drivers}}
+
+				<table class="table table-sm table-hover">
+					<thead>
+						<th>#</th>
+						<th>Nome</th>
+						<th>Telefone</th>
+						<th>E-Mail</th>
+						<th>Cidade</th>
+						<th>Nota</th>
+						<th>Status</th>
+						<th></th>
+					</thead>
+					<tbody>
+						{{#each drivers}}
+							<tr>
+								<td><span>{{_id}}</span></td>
+								<td><span>{{firstname}} {{lastname}}</span></td>
+								<td><span>{{phone}}</span></td>
+								<td><span>{{email}}</span></td>
+								<td><span>{{address.city}} - {{address.state}}</span></td>
+								<td class="text-center"><span>{{rate}}</span></td>
+								<td class="text-center">
+									<span>
+										{{#ifCond accountstatus '==' 'pending'}}
+											<i class="fas fa-circle text-warning"></i>
+										{{/ifCond}}
+										{{#ifCond accountstatus '==' 'disabled'}}
+											<i class="fas fa-circle text-danger"></i>
+										{{/ifCond}}
+										{{#ifCond accountstatus '==' 'active'}}
+											<i class="fas fa-circle text-success"></i>
+										{{/ifCond}}
+									</span>
+								</td>
+							
+								<td width="150px">
+									<a class="btn btn-warning" href="#" style="color: white"><span class="fas fa-edit"></span></a>
+									<a class="btn btn-danger" href="#"><span class="fas fa-trash-alt"></span></a>
+									<a class="btn btn-info" href="#"><span class="fas fa-eye"></span></a>
+								</td>
+							</tr>
+						{{/each}}
+					</tbody>
+				</table>
+
+			{{else}}
+				<!-- Mostrar mensagem que não foram encontrados motoristas -->
+				<div class="col-sm-12 breadcrumb">
+					<div class="row">
+						<div class="col-sm-12">
+							<b><small class="text-info">Nenhum motorista foi encontrado!</small></b>
+						</div>
+					</div>
+				</div>
+			{{/if}}
+		</div>
+	</div>
+</div>
